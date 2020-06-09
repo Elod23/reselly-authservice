@@ -16,7 +16,7 @@ services:
       - POSTGRES_DB=postgres
     restart: unless-stopped
   # APP*****************************************
-  auth-service:
+  auth-service::
     image: elod23/auth-service:latest
     network_mode: bridge
     container_name: reselly-auth-service
@@ -29,5 +29,7 @@ services:
       - postgres
     links:
       - postgres
+    environment:
+      - spring.datasource.url=jdbc:postgresql://postgres:5432/postgres
 volumes:
   postgres-data:

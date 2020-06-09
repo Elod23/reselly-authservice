@@ -15,7 +15,7 @@ public class Credentials {
     @Column
     private String authorizationRealm;
 
-    private Credentials() {};
+    public Credentials() {}
 
     public Credentials(long id, String email, String password, String authorizationRealm) {
         this.id = id;
