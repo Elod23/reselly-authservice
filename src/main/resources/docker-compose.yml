@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 services:
   postgres:
     image: postgres:latest
@@ -16,7 +16,7 @@ services:
       - POSTGRES_DB=postgres
     restart: unless-stopped
   # APP*****************************************
-  auth-service::
+  auth-service:
     image: elod23/auth-service:latest
     network_mode: bridge
     container_name: reselly-auth-service

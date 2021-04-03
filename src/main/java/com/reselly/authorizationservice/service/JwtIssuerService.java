@@ -1,7 +1,6 @@
 package com.reselly.authorizationservice.service;
 
 import com.reselly.authorizationservice.entity.Credentials;
-import com.reselly.authorizationservice.repository.CredentialRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -20,6 +19,11 @@ import java.util.function.Function;
 @Service
 public class JwtIssuerService implements Serializable {
 
+    /**
+     * UUID
+     */
+    private static final long serialVersionUID = 1L;
+
     @Value("${jwt.JWT_TOKEN_VALIDITY}")
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
@@ -33,17 +37,17 @@ public class JwtIssuerService implements Serializable {
         this.credentialService = credentialService;
     }
 
-    public Boolean validateToken(String token){
+    public Boolean validateToken(String token) {
         final String email = extractUsernameFromToken(token);
         Credentials credentialsFromDb = credentialService.getCredentialsAfterEmail(email);
-        if(credentialsFromDb != null){
+        if (credentialsFromDb != null) {
             return (email.equals(credentialsFromDb.getEmail()) && !isTokenExpired(token));
         } else {
             return false;
         }
     }
 
-    public String generateToken(Credentials credentials){
+    public String generateToken(Credentials credentials) {
         Map<String, Object> claims = new HashMap<>();
         if (credentialService.getCredentialsAfterEmail(credentials.getEmail()) != null) {
             return doGenerateToken(claims, credentials.getEmail());
@@ -56,12 +60,12 @@ public class JwtIssuerService implements Serializable {
         return null;
     }
 
-    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver){
+    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
     }
 
-    private String doGenerateToken(Map<String, Object> claims, String subject){
+    private String doGenerateToken(Map<String, Object> claims, String subject) {
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
@@ -86,4 +90,3 @@ public class JwtIssuerService implements Serializable {
     }
 
 }
-
